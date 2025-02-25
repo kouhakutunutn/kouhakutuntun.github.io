@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI & 体脂肪率 計算機</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        input, select { margin: 5px; padding: 8px; font-size: 16px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        #result { margin-top: 20px; font-size: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>BMI & 体脂肪率 計算機</h1>
+    <label>体重 (kg): <input type="number" id="weight" placeholder="例: 70"></label><br>
+    <label>身長 (cm): <input type="number" id="height" placeholder="例: 175"></label><br>
+    <label>年齢: <input type="number" id="age" placeholder="例: 25"></label><br>
+    <label>性別: 
+        <select id="gender">
+            <option value="1">男性</option>
+            <option value="0">女性</option>
+        </select>
+    </label><br>
+    <button onclick="calculate()">計算</button>
+
+    <div id="result"></div>
+
+    <script>
+        function calculate() {
+            let weight = parseFloat(document.getElementById("weight").value);
+            let height = parseFloat(document.getElementById("height").value) / 100; // cm → m に変換
+            let age = parseInt(document.getElementById("age").value);
+            let gender = parseInt(document.getElementById("gender").value); // 男性:1, 女性:0
+
+            if (!weight || !height || height <= 0 || !age) {
+                document.getElementById("result").innerHTML = "正しい値を入力してください";
+                return;
+            }
+
+            // BMI 計算
+            let bmi = weight / (height * height);
+            let bmiCategory = "";
+
+            if (bmi < 18.5) bmiCategory = "痩せ型";
+            else if (bmi < 25) bmiCategory = "普通体重";
+            else if (bmi < 30) bmiCategory = "肥満 (1度)";
+            else if (bmi < 35) bmiCategory = "肥満 (2度)";
+            else if (bmi < 40) bmiCategory = "肥満 (3度)";
+            else bmiCategory = "肥満 (4度)";
+
+            // 体脂肪率 計算 (BMIを用いた計算式)
+            let bodyFat = (1.2 * bmi) + (0.23 * age) - (10.8 * gender) - 5.4;
+            let bodyFatCategory = "";
+
+            if (gender === 1) { // 男性
+                if (bodyFat < 10) bodyFatCategory = "低すぎ（アスリート向け）";
+                else if (bodyFat < 20) bodyFatCategory = "標準";
+                else if (bodyFat < 25) bodyFatCategory = "やや高め";
+                else bodyFatCategory = "高い（肥満）";
+            } else { // 女性
+                if (bodyFat < 20) bodyFatCategory = "低すぎ（アスリート向け）";
+                else if (bodyFat < 30) bodyFatCategory = "標準";
+                else if (bodyFat < 35) bodyFatCategory = "やや高め";
+                else bodyFatCategory = "高い（肥満）";
+            }
+
+            // 結果表示
+            document.getElementById("result").innerHTML = 
+                `あなたのBMI: ${bmi.toFixed(2)} (${bmiCategory})<br>
+                あなたの体脂肪率: ${bodyFat.toFixed(2)}% (${bodyFatCategory})`;
+        }
+    </script>
+
+</body>
+</html>
